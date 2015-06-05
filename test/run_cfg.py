@@ -11,9 +11,9 @@ process.load("DataSleuth.DataSleuth.caloTowerMaker_cfi")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 process.GlobalTag.globaltag = "GR_R_74_V12"
 
-#process.source = cms.Source("PoolSource",
-#       fileNames = cms.untracked.vstring('file:/nfs-7/userdata/jgran/Run2015A/ExpressPhysics/FEVT/Express-v1/0EA17D6D-B609-E511-9404-02163E014682.root')
-#)
+process.source = cms.Source("PoolSource",
+       fileNames = cms.untracked.vstring('file:/nfs-7/userdata/jgran/Run2015A/ExpressPhysics/FEVT/Express-v1/0EA17D6D-B609-E511-9404-02163E014682.root')
+)
 
 process.out = cms.OutputModule("PoolOutputModule",
   fileName     = cms.untracked.string('ntuple.root'),
