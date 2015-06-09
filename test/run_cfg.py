@@ -8,6 +8,7 @@ process.load("DataSleuth.DataSleuth.metMaker_cfi")
 process.load("DataSleuth.DataSleuth.caloJetMaker_cfi")
 process.load("DataSleuth.DataSleuth.caloTowerMaker_cfi")
 process.load("DataSleuth.DataSleuth.hcalNoiseSummaryMaker_cfi")
+process.load("DataSleuth.DataSleuth.hltMaker_cfi")
 
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 
@@ -36,7 +37,8 @@ process.p = cms.Path(
     process.HBHENoiseFilterResultProducer *
     process.metMaker *
     process.caloJetMaker *
-    process.caloTowerMaker
+    process.caloTowerMaker *
+    process.hltMaker
 )
 
 #process.MessageLogger.cerr.FwkReport.reportEvery = 1
