@@ -17,7 +17,8 @@ process.load("CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi")
 process.GlobalTag.globaltag = "GR_R_74_V12"
 
 process.source = cms.Source("PoolSource",
-                            fileNames = cms.untracked.vstring('file:/nfs-7/userdata/jgran/Run2015A/ExpressPhysics/FEVT/Express-v1/0EA17D6D-B609-E511-9404-02163E014682.root')
+                            # fileNames = cms.untracked.vstring('file:/nfs-7/userdata/jgran/Run2015A/ExpressPhysics/FEVT/Express-v1/0EA17D6D-B609-E511-9404-02163E014682.root')
+                            fileNames = cms.untracked.vstring('file:/home/users/fgolf/ntupling/CMSSW_7_4_4_patch1-CaloMETStudies/src/DataSleuth/DataSleuth/test/merged_metTailEvents.root')
 )
 
 process.out = cms.OutputModule("PoolOutputModule",
