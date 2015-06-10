@@ -47,6 +47,10 @@ METMaker::METMaker(const edm::ParameterSet& iConfig) {
 	  branchprefix.replace(branchprefix.find("_"),1,"");
      
      produces<bool> (branchprefix+"hbheFilter").setBranchAlias(aliasprefix_+"_hbheFilter");
+     produces<bool> (branchprefix+"hbheFilterRun1").setBranchAlias(aliasprefix_+"_hbheFilterRun1");
+     produces<bool> (branchprefix+"hbheFilterRun2Loose").setBranchAlias(aliasprefix_+"_hbheFilterRun2Loose");
+     produces<bool> (branchprefix+"hbheFilterRun2Tight").setBranchAlias(aliasprefix_+"_hbheFilterRun2Tight");
+     produces<bool> (branchprefix+"cscTightHaloFilter").setBranchAlias(aliasprefix_+"_cscTightHaloFilter");
 
      produces<float> (branchprefix+"met"          ).setBranchAlias(aliasprefix_+"_met"          );
      produces<float> (branchprefix+"metPhi"       ).setBranchAlias(aliasprefix_+"_metPhi"       );
@@ -150,7 +154,11 @@ METMaker::METMaker(const edm::ParameterSet& iConfig) {
      towerEtThreshold      = iConfig.getParameter<double>       ("towerEtThreshold_");
      make_eta_rings        = iConfig.getParameter<bool>         ("make_eta_rings_");
      hbheNoiseFilterInputTag = iConfig.getParameter<edm::InputTag>("hbheNoiseFilterInputTag_");
-
+     hbheNoiseFilterRun1InputTag = iConfig.getParameter<edm::InputTag>("hbheNoiseFilterRun1InputTag_");
+     hbheNoiseFilterRun2LooseInputTag = iConfig.getParameter<edm::InputTag>("hbheNoiseFilterRun2LooseInputTag_");
+     hbheNoiseFilterRun2TightInputTag = iConfig.getParameter<edm::InputTag>("hbheNoiseFilterRun2TightInputTag_");
+     cscTightHaloFilterInputTag = iConfig.getParameter<edm::InputTag>("cscTightHaloFilterInputTag_");
+     
      if( make_eta_rings ) {
 	  produces<vector<float> > (branchprefix+"towermetetaslice"         ).setBranchAlias(aliasprefix_+"_towermet_etaslice"         );
 	  produces<vector<float> > (branchprefix+"ecalmetetaslice"          ).setBranchAlias(aliasprefix_+"_ecalmet_etaslice"          );
@@ -178,6 +186,10 @@ void METMaker::endJob()
 void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   
      auto_ptr<bool>    evt_hbheFilter          (new bool      );
+     auto_ptr<bool>    evt_hbheFilterRun1          (new bool      );
+     auto_ptr<bool>    evt_hbheFilterRun2Loose          (new bool      );
+     auto_ptr<bool>    evt_hbheFilterRun2Tight          (new bool      );
+     auto_ptr<bool>    evt_cscTightHaloFilter  (new bool      );     
      auto_ptr<float>   evt_met                 (new float     );
      auto_ptr<float>   evt_metPhi              (new float     );
      auto_ptr<float>   evt_metSig              (new float     );
@@ -273,9 +285,17 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
      edm::Handle< edm::ValueMap<reco::MuonMETCorrectionData> > muon_vm_h;
      edm::Handle< reco::MuonCollection > muon_h;
-     edm::Handle<bool> filter_h;     
+     edm::Handle<bool> filter_h;
+     edm::Handle<bool> filterRun1_h;
+     edm::Handle<bool> filterRun2Loose_h;
+     edm::Handle<bool> filterRun2Tight_h;
+     edm::Handle<bool> cscFilter_h;          
 
      iEvent.getByLabel(hbheNoiseFilterInputTag, filter_h);
+     iEvent.getByLabel(hbheNoiseFilterRun1InputTag, filterRun1_h);
+     iEvent.getByLabel(hbheNoiseFilterRun2LooseInputTag, filterRun2Loose_h);
+     iEvent.getByLabel(hbheNoiseFilterRun2TightInputTag, filterRun2Tight_h);
+     iEvent.getByLabel(cscTightHaloFilterInputTag, cscFilter_h);
      iEvent.getByLabel(met_tag      , met_h       );
      iEvent.getByLabel(metHO_tag    , metHO_h     );
      iEvent.getByLabel(metNoHF_tag  , metNoHF_h   );
@@ -293,6 +313,11 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      iEvent.getByLabel(muon_tag   , muon_h    );
     
      *evt_hbheFilter   = filter_h.isValid() ? *filter_h : false;
+     *evt_hbheFilterRun1   = filterRun1_h.isValid() ? *filterRun1_h : false;
+     *evt_hbheFilterRun2Loose   = filterRun2Loose_h.isValid() ? *filterRun2Loose_h : false;
+     *evt_hbheFilterRun2Tight   = filterRun2Tight_h.isValid() ? *filterRun2Tight_h : false;
+     *evt_cscTightHaloFilter = cscFilter_h.isValid() ? *cscFilter_h : false;
+
      *evt_met			= met_h.isValid()		 ? ( met_h->front()		 ).pt()			: -9999;
      *evt_metPhi		= met_h.isValid()		 ? ( met_h->front()		 ).phi()		: -9999;
      *evt_metSig		= met_h.isValid()		 ? ( met_h->front()		 ).metSignificance()	: -9999;
@@ -495,6 +520,10 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	  branchprefix.replace(branchprefix.find("_"),1,"");
 
      iEvent.put(evt_hbheFilter        ,branchprefix+"hbheFilter"       );
+     iEvent.put(evt_hbheFilterRun1        ,branchprefix+"hbheFilterRun1"       );
+     iEvent.put(evt_hbheFilterRun2Loose        ,branchprefix+"hbheFilterRun2Loose"       );
+     iEvent.put(evt_hbheFilterRun2Tight        ,branchprefix+"hbheFilterRun2Tight"       );
+     iEvent.put(evt_cscTightHaloFilter,branchprefix+"cscTightHaloFilter"       );
      iEvent.put(evt_met               ,branchprefix+"met"              );
      iEvent.put(evt_metPhi            ,branchprefix+"metPhi"           );
      iEvent.put(evt_metSig            ,branchprefix+"metSig"           );

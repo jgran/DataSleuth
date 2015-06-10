@@ -15,6 +15,10 @@ metMaker = cms.EDProducer("METMaker",
                         muon_tag_              = cms.InputTag("muons"                ),
                         muon_vm_tag_           = cms.InputTag("muonMETValueMapProducer", "muCorrData"),
                         hbheNoiseFilterInputTag_ = cms.InputTag("HBHENoiseFilterResultProducer", "HBHENoiseFilterResult"),
+                        hbheNoiseFilterRun1InputTag_ = cms.InputTag("HBHENoiseFilterResultProducer", "HBHENoiseFilterResultRun1"),
+                        hbheNoiseFilterRun2LooseInputTag_ = cms.InputTag("HBHENoiseFilterResultProducer", "HBHENoiseFilterResultRun2Loose"),
+                        hbheNoiseFilterRun2TightInputTag_ = cms.InputTag("HBHENoiseFilterResultProducer", "HBHENoiseFilterResultRun2Tight"),
+                        cscTightHaloFilterInputTag_ = cms.InputTag("CSCTightHaloFilter", ""),
                         towerEtThreshold_      = cms.double(0.3),
                         make_eta_rings_        = cms.bool(True)
 )                                                              

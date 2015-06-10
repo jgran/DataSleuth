@@ -58,6 +58,10 @@ private:
      edm::InputTag muon_vm_tag;
      edm::InputTag muon_tag;
      edm::InputTag hbheNoiseFilterInputTag;
+     edm::InputTag hbheNoiseFilterRun1InputTag;
+     edm::InputTag hbheNoiseFilterRun2LooseInputTag;
+     edm::InputTag hbheNoiseFilterRun2TightInputTag;
+     edm::InputTag cscTightHaloFilterInputTag;
      double towerEtThreshold;
      bool make_eta_rings;
      std::string aliasprefix_;
