@@ -10,6 +10,7 @@ process.load("DataSleuth.DataSleuth.caloTowerMaker_cfi")
 process.load("DataSleuth.DataSleuth.hcalNoiseSummaryMaker_cfi")
 process.load("DataSleuth.DataSleuth.hltMaker_cfi")
 process.load("DataSleuth.DataSleuth.pfClusterMaker_cfi")
+process.load("DataSleuth.DataSleuth.pfmetMaker_cfi")
 
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 
@@ -61,10 +62,105 @@ process.pfClusterRefsForJets_step = cms.Sequence(
     process.pfClusterRefsForJets
 )
 
+#### CALO MET STUFF BEGIN #### XXX
+
+
+process.hltParticleFlowBlock = cms.EDProducer("PFBlockProducer",
+  debug = cms.untracked.bool(False),
+  verbose = cms.untracked.bool(False),
+  elementImporters = cms.VPSet(
+      cms.PSet(
+          source = cms.InputTag("particleFlowClusterECAL"),
+          #source = cms.InputTag("particleFlowClusterECALUncorrected"), #we use uncorrected
+          importerName = cms.string('GenericClusterImporter')
+      ),
+      cms.PSet(
+          source = cms.InputTag("particleFlowClusterHCAL"),
+          importerName = cms.string('GenericClusterImporter')
+      ),
+      cms.PSet(
+          source = cms.InputTag("particleFlowClusterHO"),
+          importerName = cms.string('GenericClusterImporter')
+      ),
+      cms.PSet(
+          source = cms.InputTag("particleFlowClusterHF"),
+          importerName = cms.string('GenericClusterImporter')
+      )
+  ),
+  linkDefinitions = cms.VPSet(
+      cms.PSet(
+          linkType = cms.string('ECAL:HCAL'),
+          useKDTree = cms.bool(False),
+          #linkerName = cms.string('ECALAndHCALLinker')
+          linkerName = cms.string('ECALAndHCALCaloJetLinker') #new ECal and HCal Linker for PFCaloJets
+      ),
+      cms.PSet(
+          linkType = cms.string('HCAL:HO'),
+          useKDTree = cms.bool(False),
+          linkerName = cms.string('HCALAndHOLinker')
+      ),
+      cms.PSet(
+          linkType = cms.string('HFEM:HFHAD'),
+          useKDTree = cms.bool(False),
+          linkerName = cms.string('HFEMAndHFHADLinker')
+      ),
+      cms.PSet(
+          linkType = cms.string('ECAL:ECAL'),
+          useKDTree = cms.bool(False),
+          linkerName = cms.string('ECALAndECALLinker')
+      )
+   )
+)
+
+from RecoParticleFlow.PFProducer.particleFlow_cfi import particleFlowTmp
+process.hltParticleFlow = particleFlowTmp.clone(
+    GedPhotonValueMap = cms.InputTag(""),
+    useEGammaFilters = cms.bool(False),
+    useEGammaElectrons = cms.bool(False), 
+    useEGammaSupercluster = cms.bool(False),
+    rejectTracks_Step45 = cms.bool(False),
+    usePFNuclearInteractions = cms.bool(False),  
+    blocks = cms.InputTag("hltParticleFlowBlock"), 
+    egammaElectrons = cms.InputTag(""),
+    useVerticesForNeutral = cms.bool(False),
+    PFEGammaCandidates = cms.InputTag(""),
+    useProtectionsForJetMET = cms.bool(False),
+    usePFConversions = cms.bool(False),
+    rejectTracks_Bad = cms.bool(False),
+    muons = cms.InputTag(""),
+    postMuonCleaning = cms.bool(False),
+    usePFSCEleCalib = cms.bool(False)
+    )
+
+process.load("RecoMET.METProducers.PFMET_cfi")
+process.pfCaloMet = process.pfMet.clone(
+  src = cms.InputTag("hltParticleFlow"),
+  alias = cms.string('pfCaloMet')
+)
+
+process.pfCaloMetSequence = cms.Sequence(
+    process.hltParticleFlowBlock *
+    process.hltParticleFlow *
+    process.pfCaloMet
+)
+
+# process.pfCaloMetMaker = process.metMaker.clone(
+#     aliasPrefix = cms.untracked.string("pfCaloMet"),
+#     # met_tag_ = cms.InputTag("pfCaloMet"),               
+# )
+
+process.pfCaloMetMaker = process.pfmetMaker.clone(
+    aliasPrefix = cms.untracked.string("pfCaloMet"),
+    pfMetInputTag_ = cms.InputTag("pfCaloMet")
+)
+
+#### CALO MET STUFF END #### XXX
+
 process.GlobalTag.globaltag = "GR_R_74_V12"
 
 process.source = cms.Source("PoolSource",
-                            fileNames = cms.untracked.vstring('file:/nfs-7/userdata/jgran/Run2015A/ExpressPhysics/FEVT/Express-v1/0EA17D6D-B609-E511-9404-02163E014682.root')
+                            # fileNames = cms.untracked.vstring('file:/nfs-7/userdata/jgran/Run2015A/ExpressPhysics/FEVT/Express-v1/0EA17D6D-B609-E511-9404-02163E014682.root')
+                            fileNames = cms.untracked.vstring('file:/home/users/namin/2015/met/CMSSW_7_4_4_patch1/src/DataSleuth/DataSleuth/test/2E8CE084-930B-E511-88E0-02163E0145E7.root')
                             # fileNames = cms.untracked.vstring('file:/home/users/fgolf/run2/met/stripped_events/HighMET_newHcalNoiseFilt_246074-246214.root')
 )
 
@@ -93,6 +189,8 @@ process.p = cms.Path(
     process.hltMaker *
     process.pfClusterRefsForJets_step *
     process.pfClusterMet *
+    process.pfCaloMetSequence *
+    process.pfCaloMetMaker *
     process.pfClusterMaker
 )
 
