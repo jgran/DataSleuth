@@ -23,6 +23,7 @@ private:
 
     // ----------member data ---------------------------
     edm::InputTag caloJetsInputTag;
+    // std::string caloJetsCorrectorL1FastL2L3;
     
 };
 
