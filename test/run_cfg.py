@@ -63,9 +63,6 @@ process.pfClusterRefsForJets_step = cms.Sequence(
     process.pfClusterRefsForJets
 )
 
-#### CALO MET STUFF BEGIN #### XXX
-
-
 process.hltParticleFlowBlock = cms.EDProducer("PFBlockProducer",
   debug = cms.untracked.bool(False),
   verbose = cms.untracked.bool(False),
@@ -155,17 +152,20 @@ process.pfCaloMetMaker = process.pfmetMaker.clone(
     pfMetInputTag_ = cms.InputTag("pfCaloMet")
 )
 
-#### CALO MET STUFF END #### XXX
+process.pfChMetMaker = process.pfmetMaker.clone(
+    aliasPrefix = cms.untracked.string("pfChMet"),
+    pfMetInputTag_ = cms.InputTag("pfChMet")
+)
 
 process.GlobalTag.globaltag = "GR_R_74_V12"
 
-dir="/hadoop/cms/store/user/jgran/DataSleuth/ExpressPhysics/ExpressPhysics/"
-files = ["file:"+dir+i for i in os.listdir(dir) if ".root" in i]
-files = files[0:100]
+# dir="/hadoop/cms/store/user/jgran/DataSleuth/ExpressPhysics/ExpressPhysics/"
+# files = ["file:"+dir+i for i in os.listdir(dir) if ".root" in i]
+# files = files[0:100]
 process.source = cms.Source("PoolSource",
-                            fileNames = cms.untracked.vstring(files)
+                            # fileNames = cms.untracked.vstring(files)
                             # fileNames = cms.untracked.vstring('file:/nfs-7/userdata/jgran/Run2015A/ExpressPhysics/FEVT/Express-v1/0EA17D6D-B609-E511-9404-02163E014682.root')
-                            # fileNames = cms.untracked.vstring('file:F8A29E2C-160B-E511-8E70-02163E01461C.root')
+                            fileNames = cms.untracked.vstring('file:982C31C7-5024-E511-8E29-02163E011D4A.root')
                             # fileNames = cms.untracked.vstring('file:/home/users/fgolf/run2/met/stripped_events/HighMET_newHcalNoiseFilt_246074-246214.root')
 )
 
@@ -196,6 +196,7 @@ process.p = cms.Path(
     process.pfClusterMet *
     process.pfCaloMetSequence *
     process.pfCaloMetMaker *
+    process.pfChMetMaker *
     process.pfmetMaker *
     process.pfClusterMaker
 )

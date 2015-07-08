@@ -14,6 +14,9 @@
 
 #include "DataSleuth/DataSleuth/interface/EventMaker.h"
 
+// #include "DataFormats/TrackReco/interface/TrackFwd.h"
+#include "DataFormats/TrackReco/interface/Track.h"
+
 typedef math::XYZTLorentzVectorF LorentzVector;
 typedef math::XYZPoint Point;
 using namespace edm;
@@ -29,6 +32,7 @@ EventMaker::EventMaker(const edm::ParameterSet& iConfig) {
     std::string branchprefix = aliasprefix_;
     if(branchprefix.find("_") != std::string::npos) branchprefix.replace(branchprefix.find("_"),1,"");
 
+    produces<int>                          (branchprefix+"ntracks" ).setBranchAlias(aliasprefix_+"_ntracks");
     produces<unsigned int>                 (branchprefix+"run"            ).setBranchAlias(aliasprefix_+"_run"           );
     produces<unsigned int>                 (branchprefix+"event"          ).setBranchAlias(aliasprefix_+"_event"         );
     produces<unsigned int>                 (branchprefix+"lumiBlock"      ).setBranchAlias(aliasprefix_+"_lumiBlock"     );
@@ -71,6 +75,7 @@ void EventMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
     auto_ptr<int>                         evt_orbitNumber     (new int                       );
     auto_ptr<int>                         evt_storeNumber     (new int                       );
     auto_ptr<int>                         evt_experimentType  (new int                       );
+    auto_ptr<int>                         evt_ntracks         (new int                       );
     //auto_ptr<vector<unsigned long long> > evt_timestamp       (new vector<unsigned long long>);
     //auto_ptr<vector<TString>>             evt_dataset         (new vector<TString>           );
     auto_ptr<float>                       evt_bField          (new float                     );
@@ -128,6 +133,11 @@ void EventMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
         iEvent.put(evt_detectorStatus   ,branchprefix+"detectorStatus"  );
     }
 
+    edm::Handle<edm::View<reco::Track> >  tracks;
+    iEvent.getByLabel("generalTracks",tracks);
+    *evt_ntracks = (*tracks).size();
+
+    iEvent.put(evt_ntracks              ,branchprefix+"ntracks"             );
     iEvent.put(evt_run              ,branchprefix+"run"             );
     iEvent.put(evt_event            ,branchprefix+"event"           );
     iEvent.put(evt_lumiBlock        ,branchprefix+"lumiBlock"       );
