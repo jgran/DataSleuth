@@ -44,6 +44,7 @@ HcalNoiseSummaryMaker::HcalNoiseSummaryMaker( const ParameterSet& iConfig ) {
 
 
   //
+  produces<int>     ( branchprefix_ + "hbheIsoNoiseFilter"            ).setBranchAlias( aliasprefix_ + "_hbheIsoNoiseFilter"     );
   produces<int>     ( branchprefix_ + "passLooseNoiseFilter"            ).setBranchAlias( aliasprefix_ + "_passLooseNoiseFilter"     );
   produces<int>     ( branchprefix_ + "passTightNoiseFilter"            ).setBranchAlias( aliasprefix_ + "_passTightNoiseFilter"     );
   produces<int>     ( branchprefix_ + "passHighLevelNoiseFilter"        ).setBranchAlias( aliasprefix_ + "_passHighLevelNoiseFilter" );
@@ -116,6 +117,7 @@ void HcalNoiseSummaryMaker::produce(Event& iEvent, const EventSetup& iSetup) {
   using namespace reco;
  
   // 
+  auto_ptr<int>     hcalnoise_hbheIsoNoiseFilter        ( new int    );
   auto_ptr<int>     hcalnoise_passLooseNoiseFilter        ( new int    );
   auto_ptr<int>     hcalnoise_passTightNoiseFilter        ( new int    );
   auto_ptr<int>     hcalnoise_passHighLevelNoiseFilter    ( new int    );
@@ -180,7 +182,13 @@ void HcalNoiseSummaryMaker::produce(Event& iEvent, const EventSetup& iSetup) {
   Handle<HcalNoiseSummary> hcalNoiseSum_h;
   iEvent.getByToken(hcalNoiseSummaryToken_, hcalNoiseSum_h);
   if( hcalNoiseSum_h.isValid() ){ //added protection so fastsim can run
-	//
+      // computed via https://twiki.cern.ch/twiki/bin/viewauth/CMS/HCALNoiseFilterRecipe
+      // we already have the data to compute this on-the-fly, but I'll add it here and not CMS3
+      // if it's true, we have a good event, which is the convention for other variables
+    *hcalnoise_hbheIsoNoiseFilter =
+        ( ! hcalNoiseSum_h->numIsolatedNoiseChannels() >=10 ) &&
+        ( ! hcalNoiseSum_h->isolatedNoiseSumE() >=50        ) &&
+        ( ! hcalNoiseSum_h->isolatedNoiseSumEt() >=25       );
 	*hcalnoise_passLooseNoiseFilter      = hcalNoiseSum_h -> passLooseNoiseFilter();
 	*hcalnoise_passTightNoiseFilter      = hcalNoiseSum_h -> passTightNoiseFilter();
 	*hcalnoise_passHighLevelNoiseFilter  = hcalNoiseSum_h -> passHighLevelNoiseFilter();
@@ -244,6 +252,7 @@ void HcalNoiseSummaryMaker::produce(Event& iEvent, const EventSetup& iSetup) {
   
 
 	// 
+	iEvent.put( hcalnoise_hbheIsoNoiseFilter      , branchprefix_ + "hbheIsoNoiseFilter"      );
 	iEvent.put( hcalnoise_passLooseNoiseFilter      , branchprefix_ + "passLooseNoiseFilter"      );
 	iEvent.put( hcalnoise_passTightNoiseFilter      , branchprefix_ + "passTightNoiseFilter"      );
 	iEvent.put( hcalnoise_passHighLevelNoiseFilter  , branchprefix_ + "passHighLevelNoiseFilter"  );

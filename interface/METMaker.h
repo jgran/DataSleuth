@@ -62,6 +62,11 @@ private:
      edm::InputTag hbheNoiseFilterRun2LooseInputTag;
      edm::InputTag hbheNoiseFilterRun2TightInputTag;
      edm::InputTag cscTightHaloFilterInputTag;
+     edm::InputTag EcalDeadCellTriggerPrimitiveFilterInputTag;
+     edm::InputTag eeNoiseFilterInputTag;
+     edm::InputTag eeBadScFilterInputTag;
+     edm::InputTag goodVerticesInputTag;
+     edm::InputTag trackingFailureFilterInputTag;
      double towerEtThreshold;
      bool make_eta_rings;
      std::string aliasprefix_;

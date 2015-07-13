@@ -19,6 +19,11 @@ metMaker = cms.EDProducer("METMaker",
                         hbheNoiseFilterRun2LooseInputTag_ = cms.InputTag("HBHENoiseFilterResultProducer", "HBHENoiseFilterResultRun2Loose"),
                         hbheNoiseFilterRun2TightInputTag_ = cms.InputTag("HBHENoiseFilterResultProducer", "HBHENoiseFilterResultRun2Tight"),
                         cscTightHaloFilterInputTag_ = cms.InputTag("CSCTightHaloFilter", ""),
+                        EcalDeadCellTriggerPrimitiveFilterInputTag_ = cms.InputTag("EcalDeadCellTriggerPrimitiveFilter", ""),
+                        eeBadScFilterInputTag_ = cms.InputTag("eeBadScFilter", ""),
+                        goodVerticesInputTag_ = cms.InputTag("goodVertices", ""),
+                        trackingFailureFilterInputTag_ = cms.InputTag("trackingFailureFilter", ""),
+                        eeNoiseFilterInputTag_ = cms.InputTag("eeNoiseFilter", ""),
                         towerEtThreshold_      = cms.double(0.3),
                         make_eta_rings_        = cms.bool(True)
 )                                                              

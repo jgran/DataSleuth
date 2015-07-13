@@ -11,14 +11,38 @@ process.load("DataSleuth.DataSleuth.caloTowerMaker_cfi")
 process.load("DataSleuth.DataSleuth.hcalNoiseSummaryMaker_cfi")
 process.load("DataSleuth.DataSleuth.hltMaker_cfi")
 process.load("DataSleuth.DataSleuth.pfClusterMaker_cfi")
+process.load("DataSleuth.DataSleuth.pfCandidateMaker_cfi")
 process.load("DataSleuth.DataSleuth.pfmetMaker_cfi")
+# process.load("DataSleuth.DataSleuth.metFilterMaker_cfi")
 
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 
 process.load("CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi")
 
+# various met filters
 process.load('RecoMET.METFilters.CSCTightHaloFilter_cfi')
 process.CSCTightHaloFilter.taggingMode = cms.bool(True)
+process.load('RecoMET.METFilters.eeBadScFilter_cfi')
+process.eeBadScFilter.taggingMode = cms.bool(True)
+process.load('RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi')
+process.EcalDeadCellTriggerPrimitiveFilter.taggingMode = cms.bool(True)
+process.load('RecoMET.METFilters.eeNoiseFilter_cfi')
+process.eeNoiseFilter.taggingMode = cms.bool(True)
+# process.load('RecoMET.METFilters.jetIDFailureFilter_cfi')
+# process.jetIDFailure.taggingMode = cms.bool(True)
+
+# https://github.com/cms-sw/cmssw/blob/CMSSW_7_6_X/RecoMET/METFilters/python/metFilters_cff.py
+## The Good vertices collection needed by the tracking failure filter ________||
+process.goodVertices = cms.EDFilter(
+  "VertexSelector",
+  filter = cms.bool(False),
+  src = cms.InputTag("offlinePrimaryVertices"),
+  cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.rho < 2")
+)
+
+process.load('RecoMET.METFilters.trackingFailureFilter_cfi')
+process.trackingFailureFilter.taggingMode = cms.bool(True)
+
 
 process.load("Configuration.StandardSequences.GeometryRecoDB_cff")
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
@@ -165,7 +189,8 @@ process.GlobalTag.globaltag = "GR_R_74_V12"
 process.source = cms.Source("PoolSource",
                             # fileNames = cms.untracked.vstring(files)
                             # fileNames = cms.untracked.vstring('file:/nfs-7/userdata/jgran/Run2015A/ExpressPhysics/FEVT/Express-v1/0EA17D6D-B609-E511-9404-02163E014682.root')
-                            fileNames = cms.untracked.vstring('file:982C31C7-5024-E511-8E29-02163E011D4A.root')
+                            # fileNames = cms.untracked.vstring('file:84B93F51-4E24-E511-8A1E-02163E0121CC.root')
+                            fileNames = cms.untracked.vstring('file:/home/users/namin/public_html/dump/DABF7A8D-5427-E511-AA1F-02163E01280D.root')
                             # fileNames = cms.untracked.vstring('file:/home/users/fgolf/run2/met/stripped_events/HighMET_newHcalNoiseFilt_246074-246214.root')
 )
 
@@ -186,9 +211,15 @@ process.out.outputCommands.extend(cms.untracked.vstring('keep *_*Maker*_*_DATASL
 process.p = cms.Path( 
     process.eventMaker *
     process.CSCTightHaloFilter *
+    process.eeBadScFilter *
+    process.EcalDeadCellTriggerPrimitiveFilter *
+    process.eeNoiseFilter *
+    # process.jetIDFailure *
+    process.goodVertices * process.trackingFailureFilter *
     process.hcalNoiseSummaryMaker *
     process.HBHENoiseFilterResultProducer *
     process.metMaker *
+    process.pfCandidateMaker *
     process.caloJetMaker *
     process.caloTowerMaker *
     process.hltMaker *

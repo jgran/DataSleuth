@@ -51,6 +51,11 @@ METMaker::METMaker(const edm::ParameterSet& iConfig) {
      produces<bool> (branchprefix+"hbheFilterRun2Loose").setBranchAlias(aliasprefix_+"_hbheFilterRun2Loose");
      produces<bool> (branchprefix+"hbheFilterRun2Tight").setBranchAlias(aliasprefix_+"_hbheFilterRun2Tight");
      produces<bool> (branchprefix+"cscTightHaloFilter").setBranchAlias(aliasprefix_+"_cscTightHaloFilter");
+     produces<bool> (branchprefix+"EcalDeadCellTriggerPrimitiveFilter").setBranchAlias(aliasprefix_+"_EcalDeadCellTriggerPrimitiveFilter");
+     produces<bool> (branchprefix+"goodVertices").setBranchAlias(aliasprefix_+"_goodVertices");
+     produces<bool> (branchprefix+"trackingFailureFilter").setBranchAlias(aliasprefix_+"_trackingFailureFilter");
+     produces<bool> (branchprefix+"eeNoiseFilter").setBranchAlias(aliasprefix_+"_eeNoiseFilter");
+     produces<bool> (branchprefix+"eeBadScFilter").setBranchAlias(aliasprefix_+"_eeBadScFilter");
 
      produces<float> (branchprefix+"met"          ).setBranchAlias(aliasprefix_+"_met"          );
      produces<float> (branchprefix+"metPhi"       ).setBranchAlias(aliasprefix_+"_metPhi"       );
@@ -158,6 +163,11 @@ METMaker::METMaker(const edm::ParameterSet& iConfig) {
      hbheNoiseFilterRun2LooseInputTag = iConfig.getParameter<edm::InputTag>("hbheNoiseFilterRun2LooseInputTag_");
      hbheNoiseFilterRun2TightInputTag = iConfig.getParameter<edm::InputTag>("hbheNoiseFilterRun2TightInputTag_");
      cscTightHaloFilterInputTag = iConfig.getParameter<edm::InputTag>("cscTightHaloFilterInputTag_");
+     EcalDeadCellTriggerPrimitiveFilterInputTag = iConfig.getParameter<edm::InputTag>("EcalDeadCellTriggerPrimitiveFilterInputTag_");
+     goodVerticesInputTag = iConfig.getParameter<edm::InputTag>("goodVerticesInputTag_");
+     trackingFailureFilterInputTag = iConfig.getParameter<edm::InputTag>("trackingFailureFilterInputTag_");
+     eeNoiseFilterInputTag = iConfig.getParameter<edm::InputTag>("eeNoiseFilterInputTag_");
+     eeBadScFilterInputTag = iConfig.getParameter<edm::InputTag>("eeBadScFilterInputTag_");
      
      if( make_eta_rings ) {
 	  produces<vector<float> > (branchprefix+"towermetetaslice"         ).setBranchAlias(aliasprefix_+"_towermet_etaslice"         );
@@ -190,6 +200,11 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      auto_ptr<bool>    evt_hbheFilterRun2Loose          (new bool      );
      auto_ptr<bool>    evt_hbheFilterRun2Tight          (new bool      );
      auto_ptr<bool>    evt_cscTightHaloFilter  (new bool      );     
+     auto_ptr<bool>    evt_EcalDeadCellTriggerPrimitiveFilter  (new bool      );     
+     auto_ptr<bool>    evt_goodVertices  (new bool      );     
+     auto_ptr<bool>    evt_trackingFailureFilter  (new bool      );     
+     auto_ptr<bool>    evt_eeNoiseFilter  (new bool      );     
+     auto_ptr<bool>    evt_eeBadScFilter  (new bool      );     
      auto_ptr<float>   evt_met                 (new float     );
      auto_ptr<float>   evt_metPhi              (new float     );
      auto_ptr<float>   evt_metSig              (new float     );
@@ -290,12 +305,22 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      edm::Handle<bool> filterRun2Loose_h;
      edm::Handle<bool> filterRun2Tight_h;
      edm::Handle<bool> cscFilter_h;          
+     edm::Handle<bool> EcalDeadCellTriggerPrimitiveFilter_h;          
+     edm::Handle<bool> goodVertices_h;          
+     edm::Handle<bool> trackingFailureFilter_h;          
+     edm::Handle<bool> eeNoiseFilter_h;          
+     edm::Handle<bool> eeBadScFilter_h;          
 
      iEvent.getByLabel(hbheNoiseFilterInputTag, filter_h);
      iEvent.getByLabel(hbheNoiseFilterRun1InputTag, filterRun1_h);
      iEvent.getByLabel(hbheNoiseFilterRun2LooseInputTag, filterRun2Loose_h);
      iEvent.getByLabel(hbheNoiseFilterRun2TightInputTag, filterRun2Tight_h);
      iEvent.getByLabel(cscTightHaloFilterInputTag, cscFilter_h);
+     iEvent.getByLabel(EcalDeadCellTriggerPrimitiveFilterInputTag, EcalDeadCellTriggerPrimitiveFilter_h);
+     iEvent.getByLabel(goodVerticesInputTag, goodVertices_h);
+     iEvent.getByLabel(trackingFailureFilterInputTag, trackingFailureFilter_h);
+     iEvent.getByLabel(eeNoiseFilterInputTag, eeNoiseFilter_h);
+     iEvent.getByLabel(eeBadScFilterInputTag, eeBadScFilter_h);
      iEvent.getByLabel(met_tag      , met_h       );
      iEvent.getByLabel(metHO_tag    , metHO_h     );
      iEvent.getByLabel(metNoHF_tag  , metNoHF_h   );
@@ -317,6 +342,11 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      *evt_hbheFilterRun2Loose   = filterRun2Loose_h.isValid() ? *filterRun2Loose_h : false;
      *evt_hbheFilterRun2Tight   = filterRun2Tight_h.isValid() ? *filterRun2Tight_h : false;
      *evt_cscTightHaloFilter = cscFilter_h.isValid() ? *cscFilter_h : false;
+     *evt_EcalDeadCellTriggerPrimitiveFilter = EcalDeadCellTriggerPrimitiveFilter_h.isValid() ? *EcalDeadCellTriggerPrimitiveFilter_h : false;
+     *evt_goodVertices = goodVertices_h.isValid() ? *goodVertices_h : false;
+     *evt_trackingFailureFilter = trackingFailureFilter_h.isValid() ? *trackingFailureFilter_h : false;
+     *evt_eeNoiseFilter = eeNoiseFilter_h.isValid() ? *eeNoiseFilter_h : false;
+     *evt_eeBadScFilter = eeBadScFilter_h.isValid() ? *eeBadScFilter_h : false;
 
      *evt_met			= met_h.isValid()		 ? ( met_h->front()		 ).pt()			: -9999;
      *evt_metPhi		= met_h.isValid()		 ? ( met_h->front()		 ).phi()		: -9999;
@@ -524,6 +554,11 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      iEvent.put(evt_hbheFilterRun2Loose        ,branchprefix+"hbheFilterRun2Loose"       );
      iEvent.put(evt_hbheFilterRun2Tight        ,branchprefix+"hbheFilterRun2Tight"       );
      iEvent.put(evt_cscTightHaloFilter,branchprefix+"cscTightHaloFilter"       );
+     iEvent.put(evt_EcalDeadCellTriggerPrimitiveFilter,branchprefix+"EcalDeadCellTriggerPrimitiveFilter"       );
+     iEvent.put(evt_goodVertices,branchprefix+"goodVertices"       );
+     iEvent.put(evt_trackingFailureFilter,branchprefix+"trackingFailureFilter"       );
+     iEvent.put(evt_eeNoiseFilter,branchprefix+"eeNoiseFilter"       );
+     iEvent.put(evt_eeBadScFilter,branchprefix+"eeBadScFilter"       );
      iEvent.put(evt_met               ,branchprefix+"met"              );
      iEvent.put(evt_metPhi            ,branchprefix+"metPhi"           );
      iEvent.put(evt_metSig            ,branchprefix+"metSig"           );
