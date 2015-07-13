@@ -7,6 +7,7 @@ process = cms.Process("DATASLEUTH")
 process.load("DataSleuth.DataSleuth.eventMaker_cfi")
 process.load("DataSleuth.DataSleuth.metMaker_cfi")
 process.load("DataSleuth.DataSleuth.caloJetMaker_cfi")
+process.load("DataSleuth.DataSleuth.pfJetMaker_cfi")
 process.load("DataSleuth.DataSleuth.caloTowerMaker_cfi")
 process.load("DataSleuth.DataSleuth.hcalNoiseSummaryMaker_cfi")
 process.load("DataSleuth.DataSleuth.hltMaker_cfi")
@@ -166,11 +167,6 @@ process.pfCaloMetSequence = cms.Sequence(
     process.pfCaloMet
 )
 
-# process.pfCaloMetMaker = process.metMaker.clone(
-#     aliasPrefix = cms.untracked.string("pfCaloMet"),
-#     # met_tag_ = cms.InputTag("pfCaloMet"),               
-# )
-
 process.pfCaloMetMaker = process.pfmetMaker.clone(
     aliasPrefix = cms.untracked.string("pfCaloMet"),
     pfMetInputTag_ = cms.InputTag("pfCaloMet")
@@ -214,6 +210,7 @@ process.p = cms.Path(
     process.metMaker *
     process.pfCandidateMaker *
     process.caloJetMaker *
+    process.pfJetMaker *
     process.caloTowerMaker *
     process.hltMaker *
     process.pfClusterRefsForJets_step *

@@ -7,6 +7,7 @@ process = cms.Process("DATASLEUTH")
 process.load("DataSleuth.DataSleuth.eventMaker_cfi")
 process.load("DataSleuth.DataSleuth.metMaker_cfi")
 process.load("DataSleuth.DataSleuth.caloJetMaker_cfi")
+process.load("DataSleuth.DataSleuth.pfJetMaker_cfi")
 process.load("DataSleuth.DataSleuth.caloTowerMaker_cfi")
 process.load("DataSleuth.DataSleuth.hcalNoiseSummaryMaker_cfi")
 process.load("DataSleuth.DataSleuth.hltMaker_cfi")
@@ -166,11 +167,6 @@ process.pfCaloMetSequence = cms.Sequence(
     process.pfCaloMet
 )
 
-# process.pfCaloMetMaker = process.metMaker.clone(
-#     aliasPrefix = cms.untracked.string("pfCaloMet"),
-#     # met_tag_ = cms.InputTag("pfCaloMet"),               
-# )
-
 process.pfCaloMetMaker = process.pfmetMaker.clone(
     aliasPrefix = cms.untracked.string("pfCaloMet"),
     pfMetInputTag_ = cms.InputTag("pfCaloMet")
@@ -183,15 +179,8 @@ process.pfChMetMaker = process.pfmetMaker.clone(
 
 process.GlobalTag.globaltag = "GR_R_74_V12"
 
-# dir="/hadoop/cms/store/user/jgran/DataSleuth/ExpressPhysics/ExpressPhysics/"
-# files = ["file:"+dir+i for i in os.listdir(dir) if ".root" in i]
-# files = files[0:100]
 process.source = cms.Source("PoolSource",
-                            # fileNames = cms.untracked.vstring(files)
-                            # fileNames = cms.untracked.vstring('file:/nfs-7/userdata/jgran/Run2015A/ExpressPhysics/FEVT/Express-v1/0EA17D6D-B609-E511-9404-02163E014682.root')
-                            # fileNames = cms.untracked.vstring('file:84B93F51-4E24-E511-8A1E-02163E0121CC.root')
                             fileNames = cms.untracked.vstring('file:/home/users/namin/public_html/dump/DABF7A8D-5427-E511-AA1F-02163E01280D.root')
-                            # fileNames = cms.untracked.vstring('file:/home/users/fgolf/run2/met/stripped_events/HighMET_newHcalNoiseFilt_246074-246214.root')
 )
 
 process.out = cms.OutputModule("PoolOutputModule",
@@ -221,6 +210,7 @@ process.p = cms.Path(
     process.metMaker *
     process.pfCandidateMaker *
     process.caloJetMaker *
+    process.pfJetMaker *
     process.caloTowerMaker *
     process.hltMaker *
     process.pfClusterRefsForJets_step *
