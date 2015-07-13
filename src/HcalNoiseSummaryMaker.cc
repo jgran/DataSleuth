@@ -186,9 +186,9 @@ void HcalNoiseSummaryMaker::produce(Event& iEvent, const EventSetup& iSetup) {
       // we already have the data to compute this on-the-fly, but I'll add it here and not CMS3
       // if it's true, we have a good event, which is the convention for other variables
     *hcalnoise_hbheIsoNoiseFilter =
-        ( ! hcalNoiseSum_h->numIsolatedNoiseChannels() >=10 ) &&
-        ( ! hcalNoiseSum_h->isolatedNoiseSumE() >=50        ) &&
-        ( ! hcalNoiseSum_h->isolatedNoiseSumEt() >=25       );
+        ( !(hcalNoiseSum_h->numIsolatedNoiseChannels() >=10) ) &&
+        ( !(hcalNoiseSum_h->isolatedNoiseSumE() >=50       ) ) &&
+        ( !(hcalNoiseSum_h->isolatedNoiseSumEt() >=25      ) );
 	*hcalnoise_passLooseNoiseFilter      = hcalNoiseSum_h -> passLooseNoiseFilter();
 	*hcalnoise_passTightNoiseFilter      = hcalNoiseSum_h -> passTightNoiseFilter();
 	*hcalnoise_passHighLevelNoiseFilter  = hcalNoiseSum_h -> passHighLevelNoiseFilter();
