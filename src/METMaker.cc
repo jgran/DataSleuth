@@ -52,6 +52,7 @@ METMaker::METMaker(const edm::ParameterSet& iConfig) {
      produces<bool> (branchprefix+"hbheFilterRun2Tight").setBranchAlias(aliasprefix_+"_hbheFilterRun2Tight");
      produces<bool> (branchprefix+"cscTightHaloFilter").setBranchAlias(aliasprefix_+"_cscTightHaloFilter");
      produces<bool> (branchprefix+"EcalDeadCellTriggerPrimitiveFilter").setBranchAlias(aliasprefix_+"_EcalDeadCellTriggerPrimitiveFilter");
+     produces<bool> (branchprefix+"EcalDeadCellBoundaryEnergyFilter").setBranchAlias(aliasprefix_+"_EcalDeadCellBoundaryEnergyFilter");
      produces<bool> (branchprefix+"goodVertices").setBranchAlias(aliasprefix_+"_goodVertices");
      produces<bool> (branchprefix+"trackingFailureFilter").setBranchAlias(aliasprefix_+"_trackingFailureFilter");
      produces<bool> (branchprefix+"eeNoiseFilter").setBranchAlias(aliasprefix_+"_eeNoiseFilter");
@@ -164,6 +165,7 @@ METMaker::METMaker(const edm::ParameterSet& iConfig) {
      hbheNoiseFilterRun2TightInputTag = iConfig.getParameter<edm::InputTag>("hbheNoiseFilterRun2TightInputTag_");
      cscTightHaloFilterInputTag = iConfig.getParameter<edm::InputTag>("cscTightHaloFilterInputTag_");
      EcalDeadCellTriggerPrimitiveFilterInputTag = iConfig.getParameter<edm::InputTag>("EcalDeadCellTriggerPrimitiveFilterInputTag_");
+     EcalDeadCellBoundaryEnergyFilterInputTag = iConfig.getParameter<edm::InputTag>("EcalDeadCellBoundaryEnergyFilterInputTag_");
      goodVerticesInputTag = iConfig.getParameter<edm::InputTag>("goodVerticesInputTag_");
      trackingFailureFilterInputTag = iConfig.getParameter<edm::InputTag>("trackingFailureFilterInputTag_");
      eeNoiseFilterInputTag = iConfig.getParameter<edm::InputTag>("eeNoiseFilterInputTag_");
@@ -201,6 +203,7 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      auto_ptr<bool>    evt_hbheFilterRun2Tight          (new bool      );
      auto_ptr<bool>    evt_cscTightHaloFilter  (new bool      );     
      auto_ptr<bool>    evt_EcalDeadCellTriggerPrimitiveFilter  (new bool      );     
+     auto_ptr<bool>    evt_EcalDeadCellBoundaryEnergyFilter  (new bool      );     
      auto_ptr<bool>    evt_goodVertices  (new bool      );     
      auto_ptr<bool>    evt_trackingFailureFilter  (new bool      );     
      auto_ptr<bool>    evt_eeNoiseFilter  (new bool      );     
@@ -306,6 +309,7 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      edm::Handle<bool> filterRun2Tight_h;
      edm::Handle<bool> cscFilter_h;          
      edm::Handle<bool> EcalDeadCellTriggerPrimitiveFilter_h;          
+     edm::Handle<bool> EcalDeadCellBoundaryEnergyFilter_h;          
      edm::Handle<bool> goodVertices_h;          
      edm::Handle<bool> trackingFailureFilter_h;          
      edm::Handle<bool> eeNoiseFilter_h;          
@@ -317,6 +321,7 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      iEvent.getByLabel(hbheNoiseFilterRun2TightInputTag, filterRun2Tight_h);
      iEvent.getByLabel(cscTightHaloFilterInputTag, cscFilter_h);
      iEvent.getByLabel(EcalDeadCellTriggerPrimitiveFilterInputTag, EcalDeadCellTriggerPrimitiveFilter_h);
+     iEvent.getByLabel(EcalDeadCellBoundaryEnergyFilterInputTag, EcalDeadCellBoundaryEnergyFilter_h);
      iEvent.getByLabel(goodVerticesInputTag, goodVertices_h);
      iEvent.getByLabel(trackingFailureFilterInputTag, trackingFailureFilter_h);
      iEvent.getByLabel(eeNoiseFilterInputTag, eeNoiseFilter_h);
@@ -343,6 +348,7 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      *evt_hbheFilterRun2Tight   = filterRun2Tight_h.isValid() ? *filterRun2Tight_h : false;
      *evt_cscTightHaloFilter = cscFilter_h.isValid() ? *cscFilter_h : false;
      *evt_EcalDeadCellTriggerPrimitiveFilter = EcalDeadCellTriggerPrimitiveFilter_h.isValid() ? *EcalDeadCellTriggerPrimitiveFilter_h : false;
+     *evt_EcalDeadCellBoundaryEnergyFilter = EcalDeadCellBoundaryEnergyFilter_h.isValid() ? *EcalDeadCellBoundaryEnergyFilter_h : false;
      *evt_goodVertices = goodVertices_h.isValid() ? *goodVertices_h : false;
      *evt_trackingFailureFilter = trackingFailureFilter_h.isValid() ? *trackingFailureFilter_h : false;
      *evt_eeNoiseFilter = eeNoiseFilter_h.isValid() ? *eeNoiseFilter_h : false;
@@ -555,6 +561,7 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      iEvent.put(evt_hbheFilterRun2Tight        ,branchprefix+"hbheFilterRun2Tight"       );
      iEvent.put(evt_cscTightHaloFilter,branchprefix+"cscTightHaloFilter"       );
      iEvent.put(evt_EcalDeadCellTriggerPrimitiveFilter,branchprefix+"EcalDeadCellTriggerPrimitiveFilter"       );
+     iEvent.put(evt_EcalDeadCellBoundaryEnergyFilter,branchprefix+"EcalDeadCellBoundaryEnergyFilter"       );
      iEvent.put(evt_goodVertices,branchprefix+"goodVertices"       );
      iEvent.put(evt_trackingFailureFilter,branchprefix+"trackingFailureFilter"       );
      iEvent.put(evt_eeNoiseFilter,branchprefix+"eeNoiseFilter"       );
