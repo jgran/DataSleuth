@@ -44,6 +44,11 @@ process.goodVertices = cms.EDFilter(
 process.load('RecoMET.METFilters.trackingFailureFilter_cfi')
 process.trackingFailureFilter.taggingMode = cms.bool(True)
 
+process.load('RecoMET.METFilters.EcalDeadCellBoundaryEnergyFilter_cfi')
+process.EcalDeadCellBoundaryEnergyFilter.taggingMode = cms.bool(True)
+process.EcalDeadCellBoundaryEnergyFilter.limitDeadCellToChannelStatusEB=cms.vint32(12, 13, 14)
+process.EcalDeadCellBoundaryEnergyFilter.limitDeadCellToChannelStatusEE=cms.vint32(12, 13, 14)
+
 
 process.load("Configuration.StandardSequences.GeometryRecoDB_cff")
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
@@ -202,6 +207,7 @@ process.p = cms.Path(
     process.CSCTightHaloFilter *
     process.eeBadScFilter *
     process.EcalDeadCellTriggerPrimitiveFilter *
+    process.EcalDeadCellBoundaryEnergyFilter *
     process.eeNoiseFilter *
     # process.jetIDFailure *
     process.goodVertices * process.trackingFailureFilter *
