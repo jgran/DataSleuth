@@ -180,8 +180,13 @@ process.pfChMetMaker = process.pfmetMaker.clone(
 process.GlobalTag.globaltag = "GR_R_74_V12"
 
 process.source = cms.Source("PoolSource",
-                            fileNames = cms.untracked.vstring('file:/home/users/namin/public_html/dump/DABF7A8D-5427-E511-AA1F-02163E01280D.root')
+        fileNames = cms.untracked.vstring(
+            # 'file:/home/users/namin/public_html/dump/jetid/pickevents_4.root',
+            'file:/home/users/namin/public_html/dump/jetid/pickevents_5.root',
+            'file:/home/users/namin/public_html/dump/jetid/pickevents_6.root'
+            )
 )
+
 
 process.out = cms.OutputModule("PoolOutputModule",
                                # fileName     = cms.untracked.string('HighMET_newHcalNoiseFilt_246074-246214_ntuple.root'),

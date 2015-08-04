@@ -44,6 +44,8 @@ CaloTowerMaker::CaloTowerMaker(const edm::ParameterSet& iConfig) {
 
 	produces<std::vector<float> >(branchprefix+"eta").setBranchAlias(aliasprefix_+"_eta");
 	produces<std::vector<float> >(branchprefix+"phi").setBranchAlias(aliasprefix_+"_phi");
+	produces<std::vector<int> >(branchprefix+"ieta").setBranchAlias(aliasprefix_+"_ieta");
+	produces<std::vector<int> >(branchprefix+"iphi").setBranchAlias(aliasprefix_+"_iphi");
 	produces<std::vector<uint32_t> >(branchprefix+"detid").setBranchAlias(aliasprefix_+"_detid");
 
 	// energy contributions from different detectors
@@ -258,6 +260,8 @@ void CaloTowerMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 	std::auto_ptr<std::vector<float> > vector_twrs_eta (new std::vector<float>);
 	std::auto_ptr<std::vector<float> > vector_twrs_phi (new std::vector<float>);
+	std::auto_ptr<std::vector<int> > vector_twrs_ieta (new std::vector<int>);
+	std::auto_ptr<std::vector<int> > vector_twrs_iphi (new std::vector<int>);
 	std::auto_ptr<std::vector<uint32_t> > vector_twrs_detid (new std::vector<uint32_t>);
 
 	std::auto_ptr<std::vector<float> > vector_twrs_emEnergy (new std::vector<float>);
@@ -320,6 +324,8 @@ void CaloTowerMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 		vector_twrs_eta->push_back(j->eta());
 		vector_twrs_phi->push_back(j->phi());
+		vector_twrs_ieta->push_back(j->ieta());
+		vector_twrs_iphi->push_back(j->iphi());
 		vector_twrs_detid->push_back(j->id().rawId());
 
 		vector_twrs_emEnergy->push_back(j->emEnergy());
@@ -502,6 +508,8 @@ void CaloTowerMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 	iEvent.put(evt_ntwrs, "evtn"+branchprefix);
 	iEvent.put(vector_twrs_eta, branchprefix+"eta");
 	iEvent.put(vector_twrs_phi, branchprefix+"phi");
+	iEvent.put(vector_twrs_ieta, branchprefix+"ieta");
+	iEvent.put(vector_twrs_iphi, branchprefix+"iphi");
 	iEvent.put(vector_twrs_detid, branchprefix+"detid");
 	iEvent.put(vector_twrs_emEnergy, branchprefix+"emEnergy");
 	iEvent.put(vector_twrs_hadEnergy, branchprefix+"hadEnergy");
