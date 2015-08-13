@@ -32,6 +32,9 @@ process.eeNoiseFilter.taggingMode = cms.bool(True)
 # process.load('RecoMET.METFilters.jetIDFailureFilter_cfi')
 # process.jetIDFailure.taggingMode = cms.bool(True)
 
+process.load('RecoMET.METFilters.ecalLaserCorrFilter_cfi')
+process.ecalLaserCorrFilter.taggingMode = cms.bool(True)
+
 # https://github.com/cms-sw/cmssw/blob/CMSSW_7_6_X/RecoMET/METFilters/python/metFilters_cff.py
 ## The Good vertices collection needed by the tracking failure filter ________||
 process.goodVertices = cms.EDFilter(
@@ -39,6 +42,13 @@ process.goodVertices = cms.EDFilter(
   filter = cms.bool(False),
   src = cms.InputTag("offlinePrimaryVertices"),
   cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.rho < 2")
+)
+
+process.primaryVertexFilter = cms.EDFilter("GoodVertexFilter",
+   vertexCollection = cms.InputTag('offlinePrimaryVertices'),
+   minimumNDOF = cms.uint32(4) ,
+   maxAbsZ = cms.double(24),
+   maxd0 = cms.double(2)
 )
 
 process.load('RecoMET.METFilters.trackingFailureFilter_cfi')
@@ -203,9 +213,11 @@ process.out.outputCommands.extend(cms.untracked.vstring('keep *_*Maker*_*_DATASL
 # process.out.outputCommands = cms.untracked.vstring( 'keep *' )
 
 process.p = cms.Path( 
+    process.primaryVertexFilter * 
     process.eventMaker *
     process.CSCTightHaloFilter *
     process.eeBadScFilter *
+    process.ecalLaserCorrFilter *
     process.EcalDeadCellTriggerPrimitiveFilter *
     process.EcalDeadCellBoundaryEnergyFilter *
     process.eeNoiseFilter *
