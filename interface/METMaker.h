@@ -64,6 +64,7 @@ private:
      edm::InputTag cscTightHaloFilterInputTag;
      edm::InputTag EcalDeadCellTriggerPrimitiveFilterInputTag;
      edm::InputTag EcalDeadCellBoundaryEnergyFilterInputTag;
+     edm::InputTag EcalLaserCorrFilterInputTag;
      edm::InputTag eeNoiseFilterInputTag;
      edm::InputTag eeBadScFilterInputTag;
      edm::InputTag goodVerticesInputTag;

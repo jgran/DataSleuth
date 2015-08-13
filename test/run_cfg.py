@@ -32,6 +32,18 @@ process.eeNoiseFilter.taggingMode = cms.bool(True)
 # process.load('RecoMET.METFilters.jetIDFailureFilter_cfi')
 # process.jetIDFailure.taggingMode = cms.bool(True)
 
+process.load('RecoMET.METFilters.ecalLaserCorrFilter_cfi')
+process.ecalLaserCorrFilter.taggingMode = cms.bool(True)
+
+# process.load('RecoMET.METFilters.trackingPOGFilters_cff')
+# manystripclus53X.taggedMode = cms.untracked.bool(True)
+# manystripclus53X.forcedValue = cms.untracked.bool(False)
+# toomanystripclus53X.taggedMode = cms.untracked.bool(True)
+# toomanystripclus53X.forcedValue = cms.untracked.bool(False)
+# logErrorTooManyClusters.taggedMode = cms.untracked.bool(True)
+# logErrorTooManyClusters.forcedValue = cms.untracked.bool(False)
+
+
 # https://github.com/cms-sw/cmssw/blob/CMSSW_7_6_X/RecoMET/METFilters/python/metFilters_cff.py
 ## The Good vertices collection needed by the tracking failure filter ________||
 process.goodVertices = cms.EDFilter(
@@ -39,6 +51,13 @@ process.goodVertices = cms.EDFilter(
   filter = cms.bool(False),
   src = cms.InputTag("offlinePrimaryVertices"),
   cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.rho < 2")
+)
+
+process.primaryVertexFilter = cms.EDFilter("GoodVertexFilter",
+   vertexCollection = cms.InputTag('offlinePrimaryVertices'),
+   minimumNDOF = cms.uint32(4) ,
+   maxAbsZ = cms.double(24),
+   maxd0 = cms.double(2)
 )
 
 process.load('RecoMET.METFilters.trackingFailureFilter_cfi')
@@ -186,9 +205,8 @@ process.GlobalTag.globaltag = "GR_R_74_V12"
 
 process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
-            # 'file:/home/users/namin/public_html/dump/jetid/pickevents_4.root',
-            'file:/home/users/namin/public_html/dump/jetid/pickevents_5.root',
-            'file:/home/users/namin/public_html/dump/jetid/pickevents_6.root'
+            # 'root://xrootd.unl.edu//store/express/Run2015C/ExpressPhysics/FEVT/Express-v1/000/254/226/00000/8A7EBA47-6D41-E511-82B1-02163E01471E.root',
+            'root://xrootd.unl.edu//store/relval/CMSSW_7_4_4/RelValTTbar_13/GEN-SIM-RECO/MCRUN2_74_V9_38Tbis-v1/00000/5CBB5521-2C09-E511-9F55-0025905B858C.root'
             )
 )
 
@@ -208,9 +226,12 @@ process.out.outputCommands.extend(cms.untracked.vstring('keep *_*Maker*_*_DATASL
 # process.out.outputCommands = cms.untracked.vstring( 'keep *' )
 
 process.p = cms.Path( 
+    process.primaryVertexFilter * 
     process.eventMaker *
     process.CSCTightHaloFilter *
     process.eeBadScFilter *
+    process.ecalLaserCorrFilter *
+    # process.trkPOGFilters *
     process.EcalDeadCellTriggerPrimitiveFilter *
     process.EcalDeadCellBoundaryEnergyFilter *
     process.eeNoiseFilter *
