@@ -13,6 +13,7 @@
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DataSleuth/DataSleuth/interface/PFJetMaker.h"
 #include "DataFormats/JetReco/interface/PFJet.h"
+#include "DataFormats/BTauReco/interface/JetTag.h"
 #include "JetMETCorrections/Objects/interface/JetCorrector.h"
 #include "DataFormats/ParticleFlowCandidate/interface/PFCandidateFwd.h"
 #include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
@@ -57,6 +58,7 @@ PFJetMaker::PFJetMaker(const edm::ParameterSet& iConfig){
   produces<vector<float> >         ( branchprefix+"area"                             ).setBranchAlias( aliasprefix_+"_area"                             );
 
   // Embedded b-tagging information (miniAOD only)
+  produces<vector<float> >         (branchprefix+"pfCombinedInclusiveSecondaryVertexV2BJetTag" ).setBranchAlias(aliasprefix_+"_pfCombinedInclusiveSecondaryVertexV2BJetTag");
   produces<vector<TString> >       (branchprefix+"bDiscriminatorNames"                         ).setBranchAlias(aliasprefix_+"_bDiscriminatorNames"                     );
   produces<vector<vector<float>> > (branchprefix+"bDiscriminators"                             ).setBranchAlias(aliasprefix_+"_bDiscriminators"                         );
 
@@ -105,12 +107,22 @@ void PFJetMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
   auto_ptr<vector<vector<int> >  > pfjets_pfcandIndicies            (new vector<vector<int> >   );
   auto_ptr<vector<float> >         pfjets_area                      (new vector<float>          );  
 
+  auto_ptr<vector<float> >     pfjets_pfCombinedInclusiveSecondaryVertexV2BJetTag (new vector<float>  );
   auto_ptr<        vector <TString> >      pfjets_bDiscriminatorNames                    (new vector<TString>        );
   auto_ptr<vector <vector <float>   > >    pfjets_bDiscriminators                        (new vector<vector<float> > );
 
   //PfJets
   Handle<View<reco::PFJet> > pfJetsHandle;
   iEvent.getByLabel(pfJetsInputTag_, pfJetsHandle);
+
+  edm::Handle<reco::JetTagCollection> bTagHandle;
+  iEvent.getByLabel("pfCombinedInclusiveSecondaryVertexV2BJetTags", bTagHandle);
+  const reco::JetTagCollection & bTags = *(bTagHandle.product());
+  // pairs of discrimintar,jetpt to use for matching later
+  std::vector<std::pair<float, float> > discJetPt;
+  for (unsigned int i = 0; i != bTags.size(); ++i) {
+    discJetPt.push_back( std::make_pair( bTags[i].second, bTags[i].first->pt() ) );
+  }
 
   for(View<reco::PFJet>::const_iterator pfjet_it = pfJetsHandle->begin(); pfjet_it != pfJetsHandle->end(); pfjet_it++) {
 
@@ -150,6 +162,19 @@ void PFJetMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
     } 
 
     pfjets_pfcandIndicies->push_back( pfcandIndicies );
+
+    // search through bjet information and find discriminator that matches (closest jet pt)
+    float deltaPt = 100.0;
+    float discriminator = -10.0;
+    for(unsigned int i = 0; i < discJetPt.size(); i++) {
+      float jetPt = LorentzVector(pfjet_it->p4()).pt();
+      if( fabs(jetPt - discJetPt[i].second) < deltaPt) {
+        deltaPt = fabs(jetPt - discJetPt[i].second);
+        discriminator = discJetPt[i].first;
+      }
+    }
+    pfjets_pfCombinedInclusiveSecondaryVertexV2BJetTag->push_back( discriminator );
+
   }
 
 
@@ -178,6 +203,7 @@ void PFJetMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
   iEvent.put(pfjets_pfcandIndicies            , branchprefix+"pfcandIndicies"            );
   iEvent.put(pfjets_area                      , branchprefix+"area"                      );
 
+  iEvent.put(pfjets_pfCombinedInclusiveSecondaryVertexV2BJetTag, branchprefix+"pfCombinedInclusiveSecondaryVertexV2BJetTag"); 
   iEvent.put(pfjets_bDiscriminatorNames                                    , branchprefix+"bDiscriminatorNames"     );
   iEvent.put(pfjets_bDiscriminators                                        , branchprefix+"bDiscriminators"         );
 

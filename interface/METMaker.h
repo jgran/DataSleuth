@@ -58,6 +58,7 @@ private:
      edm::InputTag muon_vm_tag;
      edm::InputTag muon_tag;
      edm::InputTag hbheNoiseFilterInputTag;
+     // edm::InputTag hbheIsoNoiseFilterInputTag;
      edm::InputTag hbheNoiseFilterRun1InputTag;
      edm::InputTag hbheNoiseFilterRun2LooseInputTag;
      edm::InputTag hbheNoiseFilterRun2TightInputTag;

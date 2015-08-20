@@ -203,10 +203,16 @@ process.pfChMetMaker = process.pfmetMaker.clone(
 
 process.GlobalTag.globaltag = "GR_R_74_V12"
 
+# /RelValTTbar_13/CMSSW_7_4_4-MCRUN2_74_V9_38Tbis-v1/GEN-SIM-RECO
+# 'root://xrootd.unl.edu//store/relval/CMSSW_7_4_4/RelValTTbar_13/GEN-SIM-RECO/MCRUN2_74_V9_38Tbis-v1/00000/5CBB5521-2C09-E511-9F55-0025905B858C.root',
+# 'root://xrootd.unl.edu//store/relval/CMSSW_7_4_4/RelValTTbar_13/GEN-SIM-RECO/MCRUN2_74_V9_38Tbis-v1/00000/9A2FB7FA-3909-E511-8CD0-0025905B858C.root',
+# 'root://xrootd.unl.edu//store/relval/CMSSW_7_4_4/RelValTTbar_13/GEN-SIM-RECO/MCRUN2_74_V9_38Tbis-v1/00000/A6B99867-3209-E511-8884-0025905B855C.root',
 process.source = cms.Source("PoolSource",
         fileNames = cms.untracked.vstring(
             # 'root://xrootd.unl.edu//store/express/Run2015C/ExpressPhysics/FEVT/Express-v1/000/254/226/00000/8A7EBA47-6D41-E511-82B1-02163E01471E.root',
-            'root://xrootd.unl.edu//store/relval/CMSSW_7_4_4/RelValTTbar_13/GEN-SIM-RECO/MCRUN2_74_V9_38Tbis-v1/00000/5CBB5521-2C09-E511-9F55-0025905B858C.root'
+            'file:output081715_5events.root',
+
+            # 'file:/hadoop/cms/phedex/store/mc/Phys14DR/DYJetsToMuMu_PtZ-180_M-50_13TeV-madgraph/RECO/PU40bx25_tsg_PHYS14_25_V1-v1/10000/0C596440-5272-E411-922A-1CC1DE051060.root'
             )
 )
 

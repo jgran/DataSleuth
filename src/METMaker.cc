@@ -161,6 +161,7 @@ METMaker::METMaker(const edm::ParameterSet& iConfig) {
      towerEtThreshold      = iConfig.getParameter<double>       ("towerEtThreshold_");
      make_eta_rings        = iConfig.getParameter<bool>         ("make_eta_rings_");
      hbheNoiseFilterInputTag = iConfig.getParameter<edm::InputTag>("hbheNoiseFilterInputTag_");
+     // hbheIsoNoiseFilterInputTag = iConfig.getParameter<edm::InputTag>("hbheIsoNoiseFilterInputTag_");
      hbheNoiseFilterRun1InputTag = iConfig.getParameter<edm::InputTag>("hbheNoiseFilterRun1InputTag_");
      hbheNoiseFilterRun2LooseInputTag = iConfig.getParameter<edm::InputTag>("hbheNoiseFilterRun2LooseInputTag_");
      hbheNoiseFilterRun2TightInputTag = iConfig.getParameter<edm::InputTag>("hbheNoiseFilterRun2TightInputTag_");
@@ -200,6 +201,7 @@ void METMaker::endJob()
 void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   
      auto_ptr<bool>    evt_hbheFilter          (new bool      );
+     // auto_ptr<bool>    evt_hbheIsoFilter          (new bool      );
      auto_ptr<bool>    evt_hbheFilterRun1          (new bool      );
      auto_ptr<bool>    evt_hbheFilterRun2Loose          (new bool      );
      auto_ptr<bool>    evt_hbheFilterRun2Tight          (new bool      );
@@ -307,6 +309,7 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      edm::Handle< edm::ValueMap<reco::MuonMETCorrectionData> > muon_vm_h;
      edm::Handle< reco::MuonCollection > muon_h;
      edm::Handle<bool> filter_h;
+     // edm::Handle<bool> filterIso_h;
      edm::Handle<bool> filterRun1_h;
      edm::Handle<bool> filterRun2Loose_h;
      edm::Handle<bool> filterRun2Tight_h;
@@ -320,6 +323,7 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      edm::Handle<bool> eeBadScFilter_h;          
 
      iEvent.getByLabel(hbheNoiseFilterInputTag, filter_h);
+     // iEvent.getByLabel(hbheIsoNoiseFilterInputTag, filterIso_h);
      iEvent.getByLabel(hbheNoiseFilterRun1InputTag, filterRun1_h);
      iEvent.getByLabel(hbheNoiseFilterRun2LooseInputTag, filterRun2Loose_h);
      iEvent.getByLabel(hbheNoiseFilterRun2TightInputTag, filterRun2Tight_h);
@@ -348,6 +352,7 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      iEvent.getByLabel(muon_tag   , muon_h    );
     
      *evt_hbheFilter   = filter_h.isValid() ? *filter_h : false;
+     // *evt_hbheIsoFilter   = filterIso_h.isValid() ? *filterIso_h : false;
      *evt_hbheFilterRun1   = filterRun1_h.isValid() ? *filterRun1_h : false;
      *evt_hbheFilterRun2Loose   = filterRun2Loose_h.isValid() ? *filterRun2Loose_h : false;
      *evt_hbheFilterRun2Tight   = filterRun2Tight_h.isValid() ? *filterRun2Tight_h : false;
@@ -562,6 +567,7 @@ void METMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	  branchprefix.replace(branchprefix.find("_"),1,"");
 
      iEvent.put(evt_hbheFilter        ,branchprefix+"hbheFilter"       );
+     // iEvent.put(evt_hbheIsoFilter        ,branchprefix+"hbheIsoFilter"       );
      iEvent.put(evt_hbheFilterRun1        ,branchprefix+"hbheFilterRun1"       );
      iEvent.put(evt_hbheFilterRun2Loose        ,branchprefix+"hbheFilterRun2Loose"       );
      iEvent.put(evt_hbheFilterRun2Tight        ,branchprefix+"hbheFilterRun2Tight"       );
