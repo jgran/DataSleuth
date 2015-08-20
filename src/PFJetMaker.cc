@@ -118,7 +118,7 @@ void PFJetMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
   edm::Handle<reco::JetTagCollection> bTagHandle;
   iEvent.getByLabel("pfCombinedInclusiveSecondaryVertexV2BJetTags", bTagHandle);
   const reco::JetTagCollection & bTags = *(bTagHandle.product());
-  // pairs of discrimintar,jetpt to use for matching later
+  // pairs of discriminator,jetpt to use for matching later
   std::vector<std::pair<float, float> > discJetPt;
   for (unsigned int i = 0; i != bTags.size(); ++i) {
     discJetPt.push_back( std::make_pair( bTags[i].second, bTags[i].first->pt() ) );
